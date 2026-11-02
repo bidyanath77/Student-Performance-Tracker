@@ -55,6 +55,9 @@ except sqlite3.Error as error:
     st.error(f"Database error: {error}")
     st.stop()
 
+# Refresh dashboard
+if st.sidebar.button("🔄 Refresh Dashboard"):
+    st.rerun()
 
 # -------------------------------
 # DASHBOARD PAGE
