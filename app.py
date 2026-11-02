@@ -57,7 +57,11 @@ except sqlite3.Error as error:
 
 # Refresh dashboard
 if st.sidebar.button("🔄 Refresh Dashboard"):
+    st.session_state["refresh_message"] = True
     st.rerun()
+
+if st.session_state.pop("refresh_message", False):
+    st.sidebar.success("Dashboard refreshed successfully!")
 
 # -------------------------------
 # DASHBOARD PAGE
