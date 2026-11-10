@@ -5,7 +5,11 @@ import plotly.express as px
 import sqlite3
 
 from database import create_table, get_students
-from forms import show_student_form
+from forms import (
+    show_student_form,
+    show_edit_student_form,
+    show_delete_student_form
+)
 from analytics import (
     total_students,
     average_marks,
@@ -28,9 +32,14 @@ st.sidebar.title("Navigation")
 
 page = st.sidebar.radio(
     "Go to",
-    ["Dashboard", "Add Student", "View Students"]
+    [
+        "Dashboard",
+        "Add Student",
+        "View Students",
+        "Edit Student",
+        "Delete Student"
+    ]
 )
-
 
 # Load real student data from SQLite
 def load_student_data():
@@ -200,7 +209,7 @@ if page == "Dashboard":
             )
 
     st.divider()
-    st.caption("Agile Team Project | Sprint 2")
+    st.caption("Agile Team Project | Sprint 3")
 
 
 # -------------------------------
@@ -243,3 +252,17 @@ elif page == "View Students":
         st.success(
             f"Total students in database: {len(df)}"
         )
+
+ # -------------------------------
+# EDIT STUDENT PAGE
+
+elif page == "Edit Student":
+    show_edit_student_form()
+
+
+# -------------------------------
+# DELETE STUDENT PAGE
+# -------------------------------
+
+elif page == "Delete Student":
+    show_delete_student_form()
