@@ -123,3 +123,52 @@ All four components passed their reported tests:
 We also successfully tested the integration between the student entry form, database, and dashboard by adding a new student and confirming that the total increased from 4 to 5.
 
 Team members used separate GitHub branches, pull requests, and code reviews to collaborate on the project.
+
+## Sprint 3 – CRUD Functionality and Integration
+
+**Sprint Dates:** 9–13 November 2026
+
+### Sprint Goal
+
+Complete CRUD functionality by adding Update and Delete features to our Student Performance Tracking System and testing that all components work correctly together.
+
+### Individual Contributions
+
+**Bidya Kumari Nath – Dashboard and UI**
+- Integrated Edit Student and Delete Student pages into the Streamlit application.
+- Connected the new forms to the main dashboard navigation.
+- Tested adding, editing and deleting student records.
+- Updated `test_dashboard.py` with two additional navigation tests.
+- Successfully passed all 7 automated dashboard tests.
+- Committed changes and merged the dashboard integration pull request into `main`.
+
+**Rupa Gurung – Student Forms**
+- Developed Edit Student and Delete Student forms.
+- Added validation for updated student information.
+- Added confirmation before deleting student records.
+- Extended automated form tests to cover Edit and Delete functionality.
+
+**Manisha Karki – Database**
+- Implemented `update_student()` and `delete_student()` in SQLite.
+- Created `test_update_delete.py`.
+- Successfully tested updating and deleting student records using a temporary database.
+
+**Shreya Shah – Analytics**
+- Responsible for verifying analytics calculations after student records are updated or deleted.
+- Testing includes student counts, average marks, attendance and study hours.
+
+### Testing and Integration
+
+- Database Update and Delete tests passed.
+- Student form tests passed.
+- All 7 dashboard tests passed.
+- Edit and Delete functionality was manually tested in Streamlit.
+- Verified that the application supports Create, Read, Update and Delete operations.
+
+### GitHub Collaboration
+
+Team members used separate feature branches, commits, pull requests and code reviews to develop and integrate their components.
+
+### Sprint 4 – Proposed Goal
+
+Our next goal is to implement login functionality and assess security risks, including SQL Injection, Cross-Site Scripting (XSS), Session Hijacking and Data Loss During Deletion. We will identify appropriate measures to reduce these risks.
