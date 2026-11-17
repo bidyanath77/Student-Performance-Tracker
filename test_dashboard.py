@@ -19,18 +19,22 @@ STUDENTS = [
 
 class TestDashboard(unittest.TestCase):
 
+    # Start the app with a simulated logged-in user
     def start_app(self, students):
-        # Mock the database to protect real student records
         with patch("database.create_table"), \
              patch("database.get_students", return_value=students):
 
-            app = AppTest.from_file(APP_FILE).run(timeout=20)
+            app = AppTest.from_file(APP_FILE)
+
+            # Sprint 4: Simulate successful login
+            app.session_state["logged_in"] = True
+
+            app.run(timeout=20)
 
         self.assertEqual(len(app.exception), 0)
         return app
 
     # Test 1: Dashboard metrics
-    
     def test_dashboard_metrics(self):
         app = self.start_app(STUDENTS)
 
@@ -45,7 +49,6 @@ class TestDashboard(unittest.TestCase):
         self.assertEqual(metrics["Average Study Hours"], "3.0")
 
     # Test 2: Empty database
-    
     def test_empty_database(self):
         app = self.start_app([])
 
@@ -64,16 +67,27 @@ class TestDashboard(unittest.TestCase):
         )
 
     # Test 3: Dashboard refresh button
-    
     def test_refresh_button(self):
         with patch("database.create_table"), \
              patch("database.get_students", return_value=STUDENTS):
 
-            app = AppTest.from_file(APP_FILE).run(timeout=20)
+            app = AppTest.from_file(APP_FILE)
+
+            app.session_state["logged_in"] = True
+            app.run(timeout=20)
 
             self.assertEqual(len(app.exception), 0)
 
-            app.sidebar.button[0].click().run(timeout=20)
+            # Find Refresh instead of accidentally clicking Logout
+            refresh_buttons = [
+                button
+                for button in app.sidebar.button
+                if "Refresh Dashboard" in button.label
+            ]
+
+            self.assertEqual(len(refresh_buttons), 1)
+
+            refresh_buttons[0].click().run(timeout=20)
 
         self.assertEqual(len(app.exception), 0)
 
@@ -85,12 +99,14 @@ class TestDashboard(unittest.TestCase):
         )
 
     # Test 4: View Students page
-    
     def test_view_students_page(self):
         with patch("database.create_table"), \
              patch("database.get_students", return_value=STUDENTS):
 
-            app = AppTest.from_file(APP_FILE).run(timeout=20)
+            app = AppTest.from_file(APP_FILE)
+
+            app.session_state["logged_in"] = True
+            app.run(timeout=20)
 
             app.sidebar.radio[0].set_value(
                 "View Students"
@@ -106,7 +122,6 @@ class TestDashboard(unittest.TestCase):
         )
 
     # Test 5: Dashboard updates student count
-    
     def test_student_count_updates(self):
         with patch("database.create_table"), \
              patch(
@@ -114,13 +129,16 @@ class TestDashboard(unittest.TestCase):
                  return_value=STUDENTS
              ) as get_students:
 
-            app = AppTest.from_file(APP_FILE).run(timeout=20)
+            app = AppTest.from_file(APP_FILE)
+
+            app.session_state["logged_in"] = True
+            app.run(timeout=20)
 
             self.assertEqual(
                 str(app.metric[0].value), "3"
             )
 
-            # Simulate one additional student
+            # Simulate adding another student
             get_students.return_value = STUDENTS + [
                 (4, "Nisha", 88.0, 92.0, 5.0)
             ]
@@ -132,15 +150,17 @@ class TestDashboard(unittest.TestCase):
         self.assertEqual(
             str(app.metric[0].value), "4"
         )
-        
- # Test 6: Edit Student navigation
-    
+
+    # Test 6: Edit Student navigation
     def test_edit_student_navigation(self):
         with patch("database.create_table"), \
              patch("database.get_students", return_value=STUDENTS), \
              patch("forms.show_edit_student_form") as edit_form:
 
-            app = AppTest.from_file(APP_FILE).run(timeout=20)
+            app = AppTest.from_file(APP_FILE)
+
+            app.session_state["logged_in"] = True
+            app.run(timeout=20)
 
             app.sidebar.radio[0].set_value(
                 "Edit Student"
@@ -148,16 +168,17 @@ class TestDashboard(unittest.TestCase):
 
             self.assertEqual(len(app.exception), 0)
             edit_form.assert_called_once()
-            
-            
+
     # Test 7: Delete Student navigation
-    
     def test_delete_student_navigation(self):
         with patch("database.create_table"), \
              patch("database.get_students", return_value=STUDENTS), \
              patch("forms.show_delete_student_form") as delete_form:
 
-            app = AppTest.from_file(APP_FILE).run(timeout=20)
+            app = AppTest.from_file(APP_FILE)
+
+            app.session_state["logged_in"] = True
+            app.run(timeout=20)
 
             app.sidebar.radio[0].set_value(
                 "Delete Student"
