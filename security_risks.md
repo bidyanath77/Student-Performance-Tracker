@@ -88,15 +88,51 @@ The automated login tests use mocked authentication
 responses for selected scenarios. Further integration
 and session security testing may be needed.
 
-## 5. Conclusion
 
-During Sprint 4, I implemented and integrated the
-login interface with the Student Performance Tracking
-System. I also added logout functionality and tested
-the login-related features.
 
-These changes provide basic application-level
-access control. Further review of session management,
-session expiration and deployment security is needed
-to strengthen protection of student information.
+## 5. Risk 3: Accidental Data Loss During Deletion
 
+**Related Jira Task:** TEAM2-64
+
+**Description:**
+Student records could be accidentally deleted, resulting
+in loss of important academic information.
+
+**Likelihood:** Medium (initial assessment)
+
+**Impact:** High
+
+**Mitigation Measures:**
+- Require confirmation before deleting student records.
+- Maintain regular SQLite database backups.
+- Restrict deletion to authenticated users.
+- Keep backups in a secure location.
+- Test database recovery procedures.
+
+**Review and Testing:**
+- Verified that a student cannot be deleted without confirmation.
+- Created a database backup named students_backup.db.
+- Verified that the backup contained 4 student records.
+- Tested recovery using a separate database file,
+  students_recovery_test.db.
+- The original students.db file was not overwritten.
+
+**Current Status:**
+Deletion confirmation, manual backup and a separate
+recovery test have been completed.
+
+**Remaining Improvements:**
+- Automate regular database backups.
+- Establish a backup retention policy.
+- Test restoration after simulated data loss.
+- Review backup access permissions and storage security.
+
+## 6. Conclusion
+
+During Sprint 4, I implemented and integrated the login interface into our Student Performance Tracking System. I added login protection and logout functionality and successfully completed five automated login tests.
+
+I also reviewed security risks related to session hijacking, unauthorized dashboard access and accidental data loss during deletion.
+
+For Jira task TEAM2-64, I tested deletion confirmation, created a SQLite database backup containing four student records and tested recovery using a separate database file without affecting the original database.
+
+These activities helped me understand the importance of authentication, access control, database backups and recovery procedures. Further improvements include automatic backups, session expiration and additional security testing.
