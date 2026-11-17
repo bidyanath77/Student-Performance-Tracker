@@ -1,3 +1,4 @@
+from login import show_login_form
 
 import streamlit as st
 import pandas as pd
@@ -26,6 +27,16 @@ st.set_page_config(
 
 # Initialize database
 create_table()
+
+# Show login page before accessing the dashboard
+if not st.session_state.get("logged_in", False):
+    show_login_form()
+    st.stop()
+
+# Logout functionality
+if st.sidebar.button("🚪 Logout"):
+    st.session_state["logged_in"] = False
+    st.rerun()
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
@@ -209,7 +220,7 @@ if page == "Dashboard":
             )
 
     st.divider()
-    st.caption("Agile Team Project | Sprint 3")
+    st.caption("Agile Team Project | Sprint 4")
 
 
 # -------------------------------
@@ -258,6 +269,7 @@ elif page == "View Students":
 
 elif page == "Edit Student":
     show_edit_student_form()
+    
 
 
 # -------------------------------
