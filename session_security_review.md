@@ -79,7 +79,7 @@ Test cases:
 4. Dashboard access after logout.
 
 *Test Results:*
-To be recorded after running the tests.
+All 4 automated tests passed successfully.
 
 ## 7. Remaining Improvements
 
