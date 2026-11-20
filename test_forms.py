@@ -150,23 +150,17 @@ class TestEditStudentForm(unittest.TestCase):
                  create=True
              ) as mock_update:
 
-            # Simulate selecting a student
             mock_st.selectbox.return_value = 1
-
-            # Simulate entering updated information
             mock_st.text_input.return_value = "Rupa Updated"
 
             mock_st.number_input.side_effect = [
                 85.0, 90.0, 5.0
             ]
 
-            # Simulate clicking Update Student
             mock_st.form_submit_button.return_value = True
 
-            # Run edit student form
             show_edit_student_form()
 
-            # Verify database update was requested
             mock_update.assert_called_once_with(
                 1,
                 "Rupa Updated",
@@ -175,7 +169,6 @@ class TestEditStudentForm(unittest.TestCase):
                 5.0
             )
 
-            # Verify form refresh
             mock_st.rerun.assert_called_once()
 
     # Test 17: Reject invalid student update
@@ -197,8 +190,6 @@ class TestEditStudentForm(unittest.TestCase):
              ) as mock_update:
 
             mock_st.selectbox.return_value = 1
-
-            # Invalid empty student name
             mock_st.text_input.return_value = " "
 
             mock_st.number_input.side_effect = [
@@ -209,10 +200,8 @@ class TestEditStudentForm(unittest.TestCase):
 
             show_edit_student_form()
 
-            # Database update should not happen
             mock_update.assert_not_called()
 
-            # Validation error should be displayed
             mock_st.error.assert_called_with(
                 "Student Name is required."
             )
@@ -243,18 +232,13 @@ class TestDeleteStudentForm(unittest.TestCase):
              ) as mock_delete:
 
             mock_st.selectbox.return_value = 1
-
-            # Confirmation checkbox is not selected
             mock_st.checkbox.return_value = False
-
             mock_st.form_submit_button.return_value = True
 
             show_delete_student_form()
 
-            # Verify student was not deleted
             mock_delete.assert_not_called()
 
-            # Verify error message
             mock_st.error.assert_called_with(
                 "Please confirm before deleting the student."
             )
@@ -280,19 +264,106 @@ class TestDeleteStudentForm(unittest.TestCase):
              ) as mock_delete:
 
             mock_st.selectbox.return_value = 1
-
-            # Confirmation checkbox is selected
             mock_st.checkbox.return_value = True
-
             mock_st.form_submit_button.return_value = True
 
             show_delete_student_form()
 
-            # Verify correct student deletion was requested
             mock_delete.assert_called_once_with(1)
-
-            # Verify form refresh
             mock_st.rerun.assert_called_once()
+
+
+# ==========================================
+# SPRINT 4 - INPUT VALIDATION AND XSS TESTS
+# ==========================================
+
+class TestSprint4Validation(unittest.TestCase):
+
+    # Test 20: Reject student names longer than 100 characters
+    def test_student_name_too_long(self):
+
+        long_name = "A" * 101
+
+        valid, message = validate_student(
+            long_name, 85, 90, 5
+        )
+
+        self.assertFalse(valid)
+        self.assertEqual(
+            message,
+            "Student Name must not exceed 100 characters."
+        )
+
+    # Test 21: Accept student names exactly 100 characters long
+    def test_student_name_max_length(self):
+
+        student_name = "A" * 100
+
+        valid, message = validate_student(
+            student_name, 85, 90, 5
+        )
+
+        self.assertTrue(valid)
+
+    # Test 22: Accept legitimate special characters
+    def test_student_name_special_characters(self):
+
+        valid, message = validate_student(
+            "Anne-Marie O'Connor", 85, 90, 5
+        )
+
+        self.assertTrue(valid)
+
+    # Test 23: Accept Unicode student names
+    def test_student_name_unicode(self):
+
+        valid, message = validate_student(
+            "श्रेया गुरुङ", 85, 90, 5
+        )
+
+        self.assertTrue(valid)
+
+    # Test 24: Handle HTML-like input without crashing
+    def test_html_input_handling(self):
+
+        html_input = "<b>Test Student</b>"
+
+        valid, message = validate_student(
+            html_input, 85, 90, 5
+        )
+
+        self.assertIsInstance(valid, bool)
+        self.assertIsInstance(message, str)
+
+    # Test 25: Handle JavaScript-like input without crashing
+    def test_xss_input_handling(self):
+
+        xss_input = "<script>alert('XSS Test')</script>"
+
+        valid, message = validate_student(
+            xss_input, 85, 90, 5
+        )
+
+        self.assertIsInstance(valid, bool)
+        self.assertIsInstance(message, str)
+
+    # Test 26: Reject infinite numerical values
+    def test_infinite_marks(self):
+
+        valid, message = validate_student(
+            "Rupa", math.inf, 90, 5
+        )
+
+        self.assertFalse(valid)
+
+    # Test 27: Reject boolean values in numerical fields
+    def test_boolean_marks(self):
+
+        valid, message = validate_student(
+            "Rupa", True, 90, 5
+        )
+
+        self.assertFalse(valid)
 
 
 # ==========================================

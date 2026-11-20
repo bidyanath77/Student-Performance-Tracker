@@ -7,7 +7,7 @@ from database import create_table, add_student, get_students
 
 
 # ==========================================
-# STUDENT VALIDATION - SPRINT 2
+# STUDENT VALIDATION - SPRINT 2 & 4
 # ==========================================
 
 def validate_student(student_name, marks, attendance, study_hours):
@@ -15,6 +15,10 @@ def validate_student(student_name, marks, attendance, study_hours):
     # Validate student name
     if not isinstance(student_name, str) or not student_name.strip():
         return False, "Student Name is required."
+
+    # Sprint 4: Limit student names to 100 characters
+    if len(student_name.strip()) > 100:
+        return False, "Student Name must not exceed 100 characters."
 
     # Validate marks
     if (
