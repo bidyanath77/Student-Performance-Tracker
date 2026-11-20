@@ -21,10 +21,10 @@ Test file: test_session_security.py
 
 | ID | Test Scenario | Expected Result | Status |
 |---|---|---|---|
-| TC01 | Successful login | Dashboard displayed | Pending |
-| TC02 | Failed login | Invalid credentials rejected | Pending |
-| TC03 | Unauthorized access | Dashboard blocked | Pending |
-| TC04 | Logout | Session authentication reset and dashboard blocked | Pending |
+| TC01 | Successful login | Dashboard displayed | Passed |
+| TC02 | Failed login | Invalid credentials rejected | Passed |
+| TC03 | Unauthorized access | Dashboard blocked | Passed |
+| TC04 | Logout | Session authentication reset and dashboard blocked | Passed |
 
 ## 4. Security Code Review
 
