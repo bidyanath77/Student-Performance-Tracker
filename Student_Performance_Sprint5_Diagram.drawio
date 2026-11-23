@@ -1,0 +1,58 @@
+<mxfile host="app.diagrams.net" agent="ChatGPT">
+  <diagram name="Sprint 5 System Diagram" id="sprint5">
+    <mxGraphModel dx="1194" dy="652" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="app" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=9;fillColor=#fff2cc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;Streamlit Application (app.py)&lt;/b&gt;&lt;hr/&gt;+ displays pages and dashboard&lt;br/&gt;+ connects features" vertex="1">
+          <mxGeometry height="110" width="265" x="455" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="login" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=9;fillColor=#f8cecc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;Authentication (auth.py / login.py)&lt;/b&gt;&lt;hr/&gt;+ user login&lt;br/&gt;+ session access checks" vertex="1">
+          <mxGeometry height="125" width="245" x="55" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="db" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=9;fillColor=#d5e8d4;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;Database (database.py)&lt;/b&gt;&lt;hr/&gt;SQLite: students.db&lt;hr/&gt;+ create_table()&lt;br/&gt;+ add_student(...)&lt;br/&gt;+ other CRUD functions" vertex="1">
+          <mxGeometry height="155" width="265" x="455" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="student" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=9;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;Student record (SQLite table)&lt;/b&gt;&lt;hr/&gt;student_id: Integer&lt;br/&gt;student_name: String&lt;br/&gt;marks: Real&lt;br/&gt;attendance: Real&lt;br/&gt;study_hours: Real" vertex="1">
+          <mxGeometry height="170" width="265" x="830" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="analytics" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=9;fillColor=#e1d5e7;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;Analytics (analytics.py)&lt;/b&gt;&lt;hr/&gt;+ total_students(df)&lt;br/&gt;+ average_marks(df)&lt;br/&gt;+ average_attendance(df)&lt;br/&gt;+ average_study_hours(df)" vertex="1">
+          <mxGeometry height="170" width="270" x="55" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="find" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=9;fillColor=#fff2cc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;Find feature (planned)&lt;/b&gt;&lt;hr/&gt;+ find student records" vertex="1">
+          <mxGeometry height="115" width="215" x="390" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="filter" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=9;fillColor=#fff2cc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;Filter feature (planned)&lt;/b&gt;&lt;hr/&gt;+ filter student records" vertex="1">
+          <mxGeometry height="115" width="215" x="640" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="recovery" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=9;fillColor=#fff2cc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;Recovery feature (planned)&lt;/b&gt;&lt;hr/&gt;+ recover deleted student records" vertex="1">
+          <mxGeometry height="115" width="215" x="890" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="app" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=1;strokeColor=#596579;fontSize=11;labelBackgroundColor=#ffffff;" target="login" value="authenticates through">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="app" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=1;strokeColor=#596579;fontSize=11;labelBackgroundColor=#ffffff;" target="db" value="reads / updates">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="db" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=1;strokeColor=#596579;fontSize=11;labelBackgroundColor=#ffffff;" target="student" value="stores">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="analytics" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=1;strokeColor=#596579;fontSize=11;labelBackgroundColor=#ffffff;" target="student" value="calculates from">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="app" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=1;strokeColor=#596579;fontSize=11;labelBackgroundColor=#ffffff;" target="analytics" value="shows results">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="find" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=1;strokeColor=#596579;fontSize=11;labelBackgroundColor=#ffffff;" target="db" value="queries">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="filter" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=1;strokeColor=#596579;fontSize=11;labelBackgroundColor=#ffffff;" target="db" value="queries">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="recovery" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=1;strokeColor=#596579;fontSize=11;labelBackgroundColor=#ffffff;" target="db" value="restores through">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
