@@ -7,7 +7,7 @@ from database import create_table, add_student, get_students
 
 
 # ==========================================
-# STUDENT VALIDATION - SPRINT 2 & 4
+# STUDENT VALIDATION - SPRINT 2, 4 & 5
 # ==========================================
 
 def validate_student(student_name, marks, attendance, study_hours):
@@ -16,7 +16,7 @@ def validate_student(student_name, marks, attendance, study_hours):
     if not isinstance(student_name, str) or not student_name.strip():
         return False, "Student Name is required."
 
-    # Sprint 4: Limit student names to 100 characters
+    # Limit student names to 100 characters
     if len(student_name.strip()) > 100:
         return False, "Student Name must not exceed 100 characters."
 
@@ -51,7 +51,7 @@ def validate_student(student_name, marks, attendance, study_hours):
 
 
 # ==========================================
-# ADD STUDENT FORM - SPRINT 1 & 2
+# ADD STUDENT FORM - SPRINT 5 UPDATED
 # ==========================================
 
 def show_student_form():
@@ -61,34 +61,37 @@ def show_student_form():
     st.title("➕ Add Student")
     st.write("Enter student performance information.")
 
-    # Initialize session state for resetting the form
+    # Initialize session state
     if "form_version" not in st.session_state:
         st.session_state.form_version = 0
 
-    # Create student entry form
+    # Student entry form
     with st.form(f"student_form_{st.session_state.form_version}"):
 
-        student_name = st.text_input("Student Name")
+        student_name = st.text_input(
+            "Student Name",
+            help="Required; maximum 100 characters."
+        )
 
         marks = st.number_input(
             "Marks",
-            min_value=0.0,
-            max_value=100.0,
-            value=0.0
+            value=0.0,
+            step=1.0,
+            help="Marks must be between 0 and 100."
         )
 
         attendance = st.number_input(
             "Attendance (%)",
-            min_value=0.0,
-            max_value=100.0,
-            value=0.0
+            value=0.0,
+            step=1.0,
+            help="Attendance must be between 0 and 100."
         )
 
         study_hours = st.number_input(
             "Study Hours",
-            min_value=0.0,
-            max_value=24.0,
-            value=0.0
+            value=0.0,
+            step=0.5,
+            help="Study hours must be between 0 and 24."
         )
 
         save_button = st.form_submit_button("Save Student")
@@ -108,7 +111,6 @@ def show_student_form():
 
         else:
             try:
-                # Save student to SQLite database
                 student_id = add_student(
                     student_name.strip(),
                     marks,
@@ -125,16 +127,20 @@ def show_student_form():
 
                 st.rerun()
 
-            except sqlite3.Error as error:
-                st.error(f"Database error: {error}")
+            except sqlite3.Error:
+                st.error(
+                    "Database error: Unable to save the student."
+                )
 
     # Display success message
     if "success_message" in st.session_state:
-        st.success(st.session_state.pop("success_message"))
+        st.success(
+            st.session_state.pop("success_message")
+        )
 
 
 # ==========================================
-# EDIT STUDENT FORM - SPRINT 3
+# EDIT STUDENT FORM - SPRINT 5 UPDATED
 # ==========================================
 
 def show_edit_student_form():
@@ -142,7 +148,6 @@ def show_edit_student_form():
     st.title("✏️ Edit Student")
     st.write("Select a student to update their information.")
 
-    # Initialize database and retrieve students
     try:
         create_table()
         students = get_students()
@@ -153,9 +158,10 @@ def show_edit_student_form():
 
     # Display success message
     if "edit_success" in st.session_state:
-        st.success(st.session_state.pop("edit_success"))
+        st.success(
+            st.session_state.pop("edit_success")
+        )
 
-    # Check whether student records exist
     if not students:
         st.warning("No student records found.")
         return
@@ -176,7 +182,6 @@ def show_edit_student_form():
         key="edit_selected_student"
     )
 
-    # Retrieve selected student's information
     selected_student = student_records[selected_id]
 
     # Initialize edit form version
@@ -185,7 +190,7 @@ def show_edit_student_form():
 
     version = st.session_state.edit_form_version
 
-    # Display current student information
+    # Edit student form
     with st.form(f"edit_student_{selected_id}_{version}"):
 
         student_name = st.text_input(
@@ -196,24 +201,18 @@ def show_edit_student_form():
 
         marks = st.number_input(
             "Marks",
-            min_value=0.0,
-            max_value=100.0,
             value=float(selected_student[2] or 0.0),
             key=f"edit_marks_{selected_id}_{version}"
         )
 
         attendance = st.number_input(
             "Attendance (%)",
-            min_value=0.0,
-            max_value=100.0,
             value=float(selected_student[3] or 0.0),
             key=f"edit_attendance_{selected_id}_{version}"
         )
 
         study_hours = st.number_input(
             "Study Hours",
-            min_value=0.0,
-            max_value=24.0,
             value=float(selected_student[4] or 0.0),
             key=f"edit_hours_{selected_id}_{version}"
         )
@@ -225,7 +224,6 @@ def show_edit_student_form():
     # Process update request
     if update_button:
 
-        # Validate updated information
         is_valid, message = validate_student(
             student_name,
             marks,
@@ -233,11 +231,11 @@ def show_edit_student_form():
             study_hours
         )
 
+        # FIXED: Use st.error directly
         if not is_valid:
             st.error(message)
             return
 
-        # Check whether update function is available
         if not hasattr(database, "update_student"):
             st.error(
                 "Update function is not available yet. "
@@ -246,7 +244,6 @@ def show_edit_student_form():
             return
 
         try:
-            # Update student using Manisha's database function
             database.update_student(
                 selected_id,
                 student_name.strip(),
@@ -255,7 +252,7 @@ def show_edit_student_form():
                 study_hours
             )
 
-            # Retrieve updated student records
+            # Verify updated student information
             updated_students = get_students()
 
             updated_student = next(
@@ -266,7 +263,6 @@ def show_edit_student_form():
                 None
             )
 
-            # Verify updated information was saved
             if updated_student is not None:
 
                 saved_data = (
@@ -289,7 +285,6 @@ def show_edit_student_form():
                         "Student information updated successfully!"
                     )
 
-                    # Refresh form after updating
                     st.session_state.edit_form_version += 1
 
                     st.rerun()
@@ -307,7 +302,7 @@ def show_edit_student_form():
 
 
 # ==========================================
-# DELETE STUDENT FORM - SPRINT 3
+# DELETE STUDENT FORM - SPRINT 3 & 5
 # ==========================================
 
 def show_delete_student_form():
@@ -315,7 +310,6 @@ def show_delete_student_form():
     st.title("🗑️ Delete Student")
     st.write("Select a student to delete their record.")
 
-    # Initialize database and retrieve students
     try:
         create_table()
         students = get_students()
@@ -326,9 +320,10 @@ def show_delete_student_form():
 
     # Display success message
     if "delete_success" in st.session_state:
-        st.success(st.session_state.pop("delete_success"))
+        st.success(
+            st.session_state.pop("delete_success")
+        )
 
-    # Check whether student records exist
     if not students:
         st.warning("No student records available.")
         return
@@ -349,7 +344,6 @@ def show_delete_student_form():
         key="delete_selected_student"
     )
 
-    # Retrieve selected student information
     selected_student = student_records[selected_id]
 
     # Display student information
@@ -363,8 +357,8 @@ def show_delete_student_form():
 
     # Warning before deletion
     st.warning(
-        "Warning: This action will permanently delete "
-        "the selected student record."
+        "This student will be moved to the Recycle Bin. "
+    "You can restore the record from the Recovery page."
     )
 
     # Confirmation form
@@ -381,14 +375,12 @@ def show_delete_student_form():
     # Process deletion
     if delete_button:
 
-        # Require confirmation
         if not confirm_delete:
             st.error(
                 "Please confirm before deleting the student."
             )
             return
 
-        # Check whether delete function exists
         if not hasattr(database, "delete_student"):
             st.error(
                 "Delete function is not available yet. "
@@ -397,13 +389,11 @@ def show_delete_student_form():
             return
 
         try:
-            # Delete student using Manisha's database function
             database.delete_student(selected_id)
 
-            # Retrieve students after deletion
+            # Verify deletion
             remaining_students = get_students()
 
-            # Verify student was deleted
             student_exists = any(
                 student[0] == selected_id
                 for student in remaining_students
@@ -412,7 +402,7 @@ def show_delete_student_form():
             if not student_exists:
 
                 st.session_state.delete_success = (
-                    "Student deleted successfully!"
+                    "Student moved to Recycle Bin successfully!"
                 )
 
                 st.rerun()
