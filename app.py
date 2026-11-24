@@ -1,3 +1,7 @@
+from recovery import show_recovery_page
+from filter_students import show_filter_students
+from find import find_students
+
 from login import show_login_form
 
 import streamlit as st
@@ -48,7 +52,11 @@ page = st.sidebar.radio(
         "Add Student",
         "View Students",
         "Edit Student",
-        "Delete Student"
+        "Filter Students",
+        "Find Student",
+        "Delete Student",
+        "Recovery"
+        
     ]
 )
 
@@ -139,7 +147,7 @@ if page == "Dashboard":
         st.dataframe(
             display_df,
             hide_index=True,
-            use_container_width=True
+            width="stretch"
         )
 
         st.divider()
@@ -172,7 +180,7 @@ if page == "Dashboard":
 
         st.plotly_chart(
             fig,
-            use_container_width=True,
+            width="stretch",
             config={
                 "scrollZoom": False,
                 "displayModeBar": False
@@ -257,7 +265,7 @@ elif page == "View Students":
         st.dataframe(
             display_df,
             hide_index=True,
-            use_container_width=True
+            width="stretch"
         )
 
         st.success(
@@ -278,3 +286,58 @@ elif page == "Edit Student":
 
 elif page == "Delete Student":
     show_delete_student_form()
+    
+    # Filter Students Page
+elif page == "Filter Students":
+    show_filter_students()
+    
+    #find Student Page
+
+elif page == "Find Student":
+    st.title("🔍 Find Student")
+    st.write("Search for a student by name or Student ID.")
+
+    with st.form("find_student_form"):
+        search_term = st.text_input(
+            "Enter Student Name or ID"
+        )
+        search_button = st.form_submit_button("Search")
+
+    if search_button:
+        if not search_term.strip():
+            st.warning("Please enter a student name or ID.")
+        else:
+            try:
+                results = find_students(search_term)
+
+                if results:
+                    st.success(
+                        f"Found {len(results)} matching student(s)."
+                    )
+
+                    columns = [
+                        "Student ID",
+                        "Student Name",
+                        "Marks",
+                        "Attendance",
+                        "Study Hours"
+                    ]
+
+                    df = pd.DataFrame(results, columns=columns)
+
+                    st.dataframe(
+                        df,
+                        width="stretch",
+                        hide_index=True
+                    )
+                else:
+                    st.info("No matching students found.")
+
+            except sqlite3.Error:
+                st.error("Unable to search student records.")
+# -------------------------------
+# RECOVERY PAGE - SPRINT 5
+# -------------------------------
+
+elif page == "Recovery":
+    show_recovery_page()
