@@ -52,6 +52,26 @@ def get_students():
 
     return students
 
+def update_student(student_id, student_name, marks, attendance, study_hours):
+    connection = sqlite3.connect(DATABASE_NAME)
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        UPDATE students
+        SET student_name = ?,
+            marks = ?,
+            attendance = ?,
+            study_hours = ?
+        WHERE student_id = ?
+    """, (student_name, marks, attendance, study_hours, student_id))
+
+    connection.commit()
+    connection.close()
+
+def delete_student(student_id):
+    from recovery import move_to_recycle_bin
+    return move_to_recycle_bin(student_id)
+
 
 if __name__ == "__main__":
     create_table()
