@@ -1,6 +1,7 @@
 
 import sqlite3
 import streamlit as st
+from contextlib import closing
 from database import DATABASE_NAME
 
 
@@ -21,7 +22,7 @@ def create_recycle_bin(conn):
 
 # Move a student from the active table to the Recycle Bin
 def move_to_recycle_bin(student_id):
-    with sqlite3.connect(DATABASE_NAME) as conn:
+    with closing(sqlite3.connect(DATABASE_NAME)) as conn, conn:
         conn.execute("BEGIN IMMEDIATE")
         create_recycle_bin(conn)
 
@@ -60,7 +61,7 @@ def move_to_recycle_bin(student_id):
 
 # Get all students currently in the Recycle Bin
 def get_deleted_students():
-    with sqlite3.connect(DATABASE_NAME) as conn:
+    with closing(sqlite3.connect(DATABASE_NAME)) as conn, conn:
         create_recycle_bin(conn)
 
         return conn.execute(
@@ -75,7 +76,7 @@ def get_deleted_students():
 
 # Restore one student from the Recycle Bin
 def restore_student(student_id):
-    with sqlite3.connect(DATABASE_NAME) as conn:
+    with closing(sqlite3.connect(DATABASE_NAME)) as conn, conn:
         conn.execute("BEGIN IMMEDIATE")
         create_recycle_bin(conn)
 
