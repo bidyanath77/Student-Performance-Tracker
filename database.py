@@ -69,16 +69,9 @@ def update_student(student_id, student_name, marks, attendance, study_hours):
     connection.close()
 
 def delete_student(student_id):
-    connection = sqlite3.connect(DATABASE_NAME)
-    cursor = connection.cursor()
+    from recovery import move_to_recycle_bin
+    return move_to_recycle_bin(student_id)
 
-    cursor.execute("""
-        DELETE FROM students
-        WHERE student_id = ?
-    """, (student_id,))
-
-    connection.commit()
-    connection.close()
 
 if __name__ == "__main__":
     create_table()

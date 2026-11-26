@@ -357,8 +357,8 @@ def show_delete_student_form():
 
     # Warning before deletion
     st.warning(
-        "Warning: This action will permanently delete "
-        "the selected student record."
+        "This student will be moved to the Recycle Bin. "
+    "You can restore the record from the Recovery page."
     )
 
     # Confirmation form
@@ -402,7 +402,7 @@ def show_delete_student_form():
             if not student_exists:
 
                 st.session_state.delete_success = (
-                    "Student deleted successfully!"
+                    "Student moved to Recycle Bin successfully!"
                 )
 
                 st.rerun()

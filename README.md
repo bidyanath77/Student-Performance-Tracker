@@ -1,174 +1,164 @@
 Student Performance Tracking System
-Project Overview
-The Student Performance Tracking System is a Python-based application developed as part of our Agile Development Team Project at Niels Brock.
+Agile Development Team Project (CTEC2713) | Niels Brock, Copenhagen
 
-The system helps manage student records and provides an overview of academic performance, attendance, and study hours through an interactive dashboard.
+About the project
+The Student Performance Tracking System is a Python application that helps users manage and review student performance information in one place. Built with Streamlit and SQLite, it supports student record management, performance analysis, search and filtering, login protection, and restoration of deleted records.
+The project was developed collaboratively by a four-member Computer Science team using Agile practices, GitHub for version control, and Jira for task management.
 
-Main Features
-- Add student information through a Streamlit form.
-- Store and retrieve student records using SQLite.
-- Calculate total students, average marks, attendance, and study hours.
-- Display student performance through an interactive dashboard.
-- View student records and compare marks using charts.
-- Refresh the dashboard to display updated information.
+Project objectives
+- Provide a clear interface for entering and maintaining student information.
+- Make marks, attendance and study hours easier to monitor and understand.
+- Present performance summaries and visualizations on a dashboard.
+- Help users locate and filter student records efficiently.
+- Protect access to student information through authentication.
+- Reduce the risk of accidental data loss through a Recycle Bin and separate manual database backups.
 - 
-Technologies Used
-- Python
-- Streamlit
-- SQLite
-- Pandas
-- Plotly
-- Git and GitHub
-- Jira
-- Python unittest and Streamlit AppTest
+Main features
+Authentication
+The application displays a login form before the main dashboard. Authentication is handled through the login.py and auth.py modules. A logout option ends access to the current application session.
+Student record management
+Users can:
+- Add students with their names, marks, attendance and study hours.
+- View students in a table of active records.
+- Edit students to correct or update existing information.
+- Delete students with confirmation. The database deletion workflow moves records into the Recycle Bin rather than immediately discarding them.
+Form validation checks that names are present and at most 100 characters, marks and attendance are between 0 and 100, and study hours are between 0 and 24.
+Performance dashboard and analytics
+The dashboard displays:
+- Total number of students
+- Average marks
+- Average attendance
+- Average study hours
+- Student records table
+- Student marks comparison chart
+- Individual student performance details
+The dashboard uses Pandas for tabular data, Plotly for visualizations and analytics.py for summary calculations.
+Find Student
+Search for a student by student ID or by full or partial name. Name matching handles differences in capitalization and extra spaces. The search logic is implemented in find.py and made available through the main Streamlit interface.
+Filter Students
+Filter students by ranges of marks and attendance, and a minimum value for study hours. The filtering logic and interface are implemented in filter_students.py.
+Student Recovery (Recycle Bin)
+The Recovery interface shows deleted student records and allows a user to restore a selected record after confirmation. Deleted records are stored in the deleted_students table within the application's SQLite database, with a deletion timestamp.
+
+Restoration checks whether the student ID is already used by an active record. If there is a conflict, the record is not automatically overwritten and requires manual review.
+Manual database backup
+A separate SQLite backup can be retained to protect against broader database loss. This is a manual backup process, not a scheduled or automated feature. It is distinct from the Recycle Bin, which restores individual deleted students within the application.
+
+Technologies and tools
+Technology / tool	Role in the project
+Python	Application and business logic
+Streamlit	User interface, navigation and forms
+SQLite	Local student record database
+Pandas	Data handling and dashboard tables
+Plotly	Performance charts
+Git and GitHub	Source control, branches, pull requests and collaboration
+Jira	Team planning and task tracking
+VS Code	Development environment
+
+
+Project structure
+Student-Performance-Tracker/
+├── app.py                 # Main application, navigation and dashboard
+├── analytics.py           # Performance summary calculations
+├── auth.py                # Authentication logic
+├── login.py               # Login interface
+├── database.py            # Database setup and student CRUD operations
+├── forms.py               # Student forms and input validation
+├── find.py                # Find students by ID or name
+├── filter_students.py     # Filtering logic and UI
+├── recovery.py            # Recycle Bin and restore operations
+├── requirements.txt       # Python dependencies
+├── test_*.py              # Component and application tests
+├── security_risks.md      # Security risk documentation
+└── README.md              # Project documentation
+students.db is the local SQLite database used by the running application. Local database files and backups should be kept out of shared Git commits, especially if they contain student information.
+
+System architecture
+The application uses a modular structure:
+1. Presentation layer: app.py provides Streamlit navigation, dashboard views and access to other user interfaces. login.py, forms.py, filter_students.py and recovery.py also provide interface elements.
+2. Application logic: analytics.py calculates performance metrics, find.py performs student searches, auth.py handles authentication and recovery.py implements record restoration.
+3. Data layer: database.py manages the primary SQLite student records. Feature modules also use SQLite queries where appropriate.
+   
+The main students table contains these fields:
+Field	Description
+student_id	Unique identifier for a student
+student_name	Name of the student
+marks	Numerical mark (0–100)
+attendance	Attendance percentage (0–100)
+study_hours	Study hours (0–24)
+
+The deleted_students table retains the corresponding student details and a deleted_at timestamp for records moved to the Recycle Bin.
+
+Installation and setup
+Prerequisites
+- Python installed
+- Git (if cloning the repository)
+- Access to the team's GitHub repository
+1. Clone the repository
+git clone https://github.com/bidyanath77/Student-Performance-Tracker.git
+cd Student-Performance-Tracker
+The repository is private; access must be granted by a repository collaborator.
+2. Create and activate a virtual environment
+Windows (PowerShell)
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+macOS or Linux
+python3 -m venv .venv
+source .venv/bin/activate
+3. Install dependencies
+python -m pip install -r requirements.txt
+4. Run the application
+python -m streamlit run app.py
+Open the local URL displayed by Streamlit, normally http://localhost:8501. Sign in with an account configured for the application. Credentials are intentionally not included in this documentation.
+
+The application initializes the main student table when it starts. The Recycle Bin table is created when its functionality is accessed.
+Using the application
+1. Log in to access the system.
+2. Visit Dashboard to review overall performance and charts.
+3. Use Add Student to create a new record.
+4. Use View Students to see active records.
+5. Use Edit Student to update an existing record.
+6. Use Find Student or Filter Students to locate relevant records.
+7. Use Delete Student to move a record to the Recycle Bin after confirmation.
+8. Open Recovery to view and restore deleted records.
+9. Use Logout when finished.
+Testing and quality assurance
+The team developed tests and performed feature reviews during development. The project includes test modules for areas such as database operations, forms, analytics, authentication, dashboard behavior and student updates/deletion. Integration checks are particularly important because features developed in separate modules are brought together in app.py.
+
+Where pytest is installed and configured, run tests from the project directory with:
+python -m pytest
+The complete merged version should be verified for login, add/view/edit, Find, Filter, deletion, restoration and dashboard updates. This document does not report an overall test pass rate, because a verified result for the final merged code has not been supplied.
+Security, privacy and responsible use
+The system processes student information, so data protection is an important part of the design:
+- Access to the main interface is controlled by a login flow.
+- Student forms validate input before database updates.
+- Student search and database operations use SQL parameters where implemented, reducing SQL-injection risk.
+- Deletion requires confirmation, with a Recycle Bin designed to make accidental deletion recoverable.
+- Local databases, backup copies, credentials and personal student records should not be committed to the repository or shared publicly.
+- Database backup remains a separate manual responsibility; the Recycle Bin is not a substitute for a complete backup.
+Additional controls would be necessary before using the application with real student information in a production environment.
+
+Team contributions
+Team member	Main areas of contribution
+Bidya Kumari Nath	Main Streamlit dashboard and user interface, feature integration, student recovery functionality and project documentation
+Rupa Gurung	Student forms, input validation, Filter Students functionality and interface review
+Manisha Karki	Database operations, authentication, Find Student functionality and backend integration review
+Shreya Shah	Performance analytics, automated testing and team class diagram
+
+
+The application is a shared team project. Team members also participated in planning, reviews, GitHub collaboration, issue tracking and project documentation.
+Development approach
+The project followed an iterative Agile approach. The team identified requirements, divided work into components, maintained tasks in Jira, developed code in GitHub branches and brought features together through integration and review. The completed system combines database and CRUD operations, analytics, dashboard interfaces, authentication, Find, Filter and student recovery in a single application.
+Current limitations and possible improvements
+- The application uses a local SQLite database, rather than a hosted multi-user database.
+- Database backups are manual; automatic backups and full database restoration are future improvements.
+- A restored student ID may conflict with an active record, requiring manual review.
+- Additional end-to-end tests, account administration, access roles and audit logging would strengthen the system.
+- A production deployment would require further security, privacy and operational work.
 - 
-Team Members and Responsibilities
-- Bidya Kumari Nath: Dashboard and User Interface (app.py)
-- Rupa Gurung: Student Entry Form (forms.py)
-- Shreya Shah: Analytics (analytics.py)
-- Manisha Karki: Database (database.py)
-- 
-Project Structure
-- app.py — Main Streamlit application and dashboard
-- forms.py — Student entry form
-- database.py — SQLite database operations
-- analytics.py — Student performance calculations
-- requirements.txt — Python dependencies
-- test_dashboard.py — Dashboard automated tests
-- test_forms.py — Student entry form tests
-- test_database.py — Database integration test
-- test_analytics.py — Analytics calculation tests
-The test files are contributed through individual feature branches and become available on main after their pull requests are merged.
+Conclusion
+The Student Performance Tracking System brings student record management and performance monitoring together in a simple modular application. Its dashboard, validation, authentication, search, filtering and Recycle Bin features demonstrate how Python, Streamlit and SQLite can be combined to support practical data management. The project also demonstrates collaborative software development, integration and testing using Agile teamwork.
 
-How to Run the Application
-1. Clone the GitHub repository.
-2. Open the project folder in VS Code.
-3. Install the required packages:
-   pip install -r requirements.txt
-4. Run the Streamlit application:
-   streamlit run app.py
-5. Open the local address displayed in the terminal.
-6. 
-How to Run the Tests
-Run the following commands from the project folder when the corresponding test files are available:
-- Dashboard: python test_dashboard.py
-- Student Form: python test_forms.py
-- Database: python test_database.py
-- Analytics: python test_analytics.py
-- 
-Agile Development
-Our team follows Scrum methodology with weekly sprints.
-
-We use Jira to manage tasks and GitHub for version control, separate development branches, pull requests, and code reviews.
-Sprint 1 – Initial Development
-During Sprint 1, our team developed an initial working version of the Student Performance Tracking System.
-
-The main components included the student entry form, SQLite database, analytics functions, and Streamlit dashboard.
-Sprint 2 – Integration and Testing
-Sprint Dates: 2–6 November 2026
-Sprint Goal
-Improve GitHub collaboration, test individual components, review code, and verify that the different parts of the application work together correctly.
-
-Individual Contributions
-Bidya Kumari Nath – Dashboard
-- Added a dashboard refresh button and success notification.
-- Created test_dashboard.py with five automated tests.
-- Tested dashboard metrics, empty database handling, refresh functionality, student count updates, and the View Students page.
-- Added and updated README documentation.
-- Participated in code reviews and integration testing.
-- 
-Rupa Gurung – Student Entry Form
-- Worked on testing the student entry form.
-- Created test_forms.py.
-- Tested form functionality and input validation.
-- Successfully ran 15 automated tests.
-- 
-Manisha Karki – Database
-- Created test_database.py.
-- Tested saving and retrieving student records.
-- Used a temporary SQLite database to avoid modifying real student records.
-- Confirmed that the database test passed successfully.
-- 
-Shreya Shah – Analytics
-- Created test_analytics.py.
-- Tested total student count, average marks, attendance, and study hours.
-- Tested calculations using sample student data and an empty dataset.
-- Confirmed that the analytics tests passed successfully.
-- 
-Testing Results
-- Dashboard: 5 automated tests passed.
-- Student Entry Form: 15 automated tests passed.
-- Database: Integration test passed.
-- Analytics: Sample data and empty dataset tests passed.
-- Manual integration testing: Added a new student and confirmed the student count increased from 4 to 5 in View Students and the dashboard.
-- 
-GitHub Collaboration
-During Sprint 2, team members worked using separate feature branches and pull requests.
-
-We reviewed and tested code changes before merging them into the main branch.
-
-## Project Status
-
-The Student Performance Tracking System has a working version with integrated student entry, SQLite database, analytics, and dashboard components.
-
-During Sprint 2, our team focused on GitHub collaboration, component testing, and integration.
-
-All four components passed their reported tests:
-
-- **Dashboard:** 5 automated tests passed.
-- **Student Entry Form:** 15 automated tests passed.
-- **Database:** Student saving and retrieval tests passed.
-- **Analytics:** Sample data and empty dataset tests passed.
-
-We also successfully tested the integration between the student entry form, database, and dashboard by adding a new student and confirming that the total increased from 4 to 5.
-
-Team members used separate GitHub branches, pull requests, and code reviews to collaborate on the project.
-
-## Sprint 3 – CRUD Functionality and Integration
-
-**Sprint Dates:** 9–13 November 2026
-
-### Sprint Goal
-
-Complete CRUD functionality by adding Update and Delete features to our Student Performance Tracking System and testing that all components work correctly together.
-
-### Individual Contributions
-
-**Bidya Kumari Nath – Dashboard and UI**
-- Integrated Edit Student and Delete Student pages into the Streamlit application.
-- Connected the new forms to the main dashboard navigation.
-- Tested adding, editing and deleting student records.
-- Updated `test_dashboard.py` with two additional navigation tests.
-- Successfully passed all 7 automated dashboard tests.
-- Committed changes and merged the dashboard integration pull request into `main`.
-
-**Rupa Gurung – Student Forms**
-- Developed Edit Student and Delete Student forms.
-- Added validation for updated student information.
-- Added confirmation before deleting student records.
-- Extended automated form tests to cover Edit and Delete functionality.
-
-**Manisha Karki – Database**
-- Implemented `update_student()` and `delete_student()` in SQLite.
-- Created `test_update_delete.py`.
-- Successfully tested updating and deleting student records using a temporary database.
-
-**Shreya Shah – Analytics**
-- Responsible for verifying analytics calculations after student records are updated or deleted.
-- Testing includes student counts, average marks, attendance and study hours.
-
-### Testing and Integration
-
-- Database Update and Delete tests passed.
-- Student form tests passed.
-- All 7 dashboard tests passed.
-- Edit and Delete functionality was manually tested in Streamlit.
-- Verified that the application supports Create, Read, Update and Delete operations.
-
-### GitHub Collaboration
-
-Team members used separate feature branches, commits, pull requests and code reviews to develop and integrate their components.
-
-### Sprint 4 – Proposed Goal
-
-Our next goal is to implement login functionality and assess security risks, including SQL Injection, Cross-Site Scripting (XSS), Session Hijacking and Data Loss During Deletion. We will identify appropriate measures to reduce these risks.
+Developed by: Bidya Kumari Nath, Rupa Gurung, Manisha Karki and Shreya Shah
+Course: Agile Development Team Project (CTEC2713)
+Institution: Niels Brock, Copenhagen
