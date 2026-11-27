@@ -1,56 +1,66 @@
-
-import tempfile
-import os
-from unittest.mock import patch
-
 import database
 import recovery
 
 
-def test_update_delete():
-    # Create a separate database for testing
-    with tempfile.TemporaryDirectory() as temp_dir:
-        test_db = os.path.join(temp_dir, "test_students.db")
+def test_update_delete(tmp_path, monkeypatch):
 
-        # Make both modules use the test database
-        with patch.object(database, "DATABASE_NAME", test_db), \
-             patch.object(recovery, "DATABASE_NAME", test_db):
+    # Create an isolated temporary database
+    test_db = str(tmp_path / "test_students.db")
 
-            database.create_table()
+    monkeypatch.setattr(database, "DATABASE_NAME", test_db)
 
-            # Add test students
-            ram_id = database.add_student("Ram", 70, 90, 4)
-            sita_id = database.add_student("Sita", 80, 95, 3)
+    # Support the current Recovery database configuration
+    if hasattr(recovery, "DATABASE_NAME"):
+        monkeypatch.setattr(recovery, "DATABASE_NAME", test_db)
 
-            # Test UPDATE
-            database.update_student(ram_id, "Ram", 85, 92, 5)
+    database.create_table()
 
-            students = database.get_students()
-            ram = next(s for s in students if s[0] == ram_id)
+    # Add two test students
+    ram_id = database.add_student("Ram", 70, 90, 4)
+    sita_id = database.add_student("Sita", 80, 95, 3)
 
-            assert ram[2] == 85
-            assert ram[3] == 92
-            assert ram[4] == 5
+    # Test UPDATE
+    database.update_student(ram_id, "Ram", 85, 92, 5)
 
-            print("Update test passed!")
+    students = database.get_students()
+    ram = next(s for s in students if s[0] == ram_id)
 
-            # Test DELETE
-            assert database.delete_student(sita_id) is True
+    assert ram == (ram_id, "Ram", 85, 92, 5)
 
-            students = database.get_students()
+    print("Update test passed!")
 
-            assert len(students) == 1
-            assert students[0][0] == ram_id
+    # Test DELETE
+    assert database.delete_student(sita_id) is True
 
-            # Verify deleted student is in Recycle Bin
-            deleted = recovery.get_deleted_students()
-            assert len(deleted) == 1
-            assert deleted[0][0] == sita_id
+    students = database.get_students()
 
-            print("Delete test passed!")
-            print("Recycle Bin test passed!")
-            print("All update/delete tests passed!")
+    assert len(students) == 1
+    assert students[0][0] == ram_id
 
+    print("Delete test passed!")
 
-if __name__ == "__main__":
-    test_update_delete()
+    # Test RECYCLE BIN
+    deleted_students = recovery.get_deleted_students()
+
+    assert len(deleted_students) == 1
+    assert deleted_students[0][:5] == (
+        sita_id, "Sita", 80, 95, 3
+    )
+
+    print("Recycle Bin test passed!")
+
+    # Test RESTORE
+    assert recovery.restore_student(sita_id) is True
+
+    students = database.get_students()
+
+    assert len(students) == 2
+
+    sita = next(s for s in students if s[0] == sita_id)
+
+    assert sita == (sita_id, "Sita", 80, 95, 3)
+
+    assert recovery.get_deleted_students() == []
+
+    print("Restore test passed!")
+    print("All database and recovery checks passed!")
