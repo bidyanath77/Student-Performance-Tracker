@@ -176,13 +176,14 @@ The main `students` table contains:
 
 The `deleted_students` table retains corresponding student details and a `deleted_at` timestamp for records moved to the Recycle Bin.
 
+
 ## Installation and Setup
 
 ### Prerequisites
 
 - Python installed
 - Git (if cloning the repository)
-- Access to the team's GitHub repository
+- Access to the internet to download dependencies
 
 ### Step 1: Clone the Repository
 
@@ -191,7 +192,7 @@ git clone https://github.com/bidyanath77/Student-Performance-Tracker.git
 cd Student-Performance-Tracker
 ```
 
-The repository is private; access must be granted by a repository collaborator.
+This repository is public and can be cloned without requesting access.
 
 ### Step 2: Create and Activate a Virtual Environment
 
@@ -215,7 +216,21 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-### Step 4: Run the Application
+### Step 4: Create a Login Account
+
+Before accessing the application, create your own local account:
+
+```bash
+python setup_demo_user.py
+```
+
+Enter a username and a password containing at least 12 characters.
+
+The account will be created in your local SQLite database. Passwords are stored as salted hashes rather than plaintext.
+
+For demonstration and assessment purposes, users can create their own local demo account to explore the Student Performance Tracking System. No login credentials are provided in the public repository.
+
+### Step 5: Run the Application
 
 ```bash
 python -m streamlit run app.py
@@ -225,9 +240,10 @@ Open the local URL displayed by Streamlit, normally:
 
 `http://localhost:8501`
 
-Sign in with an account configured for the application. Credentials are intentionally not included in this documentation.
+Log in using the username and password you created in Step 4.
 
 The application initialises the main student table when it starts. The Recycle Bin table is created when its functionality is accessed.
+
 
 ## Using the Application
 
